@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/gh/supermedium/superframe@master/components/environment/dist/aframe-environment-component.min.js"></script>
     <script src="js/aframe-campus-components.js"></script>
     <script src="js/aframe-building-components.js"></script>
+    <script src="js/transportation-components-simple.js"></script>
     <style>
         #info-panel {
             position: absolute;
@@ -222,6 +223,14 @@
 
         <!-- 街路灯 -->
         <a-entity street-lights></a-entity>
+
+        <!-- ゆりかもめ線モノレール（シンプル版） -->
+        <a-entity monorail-tracks-simple></a-entity>
+        <a-entity yurikamome-simple="speed: 45; direction: 1"></a-entity>
+        <a-entity yurikamome-simple="speed: 40; direction: -1"></a-entity>
+
+        <!-- 車両交通システム（シンプル版） -->
+        <a-entity simple-traffic="carCount: 12"></a-entity>
 
         <!-- 情報パネル表示用 -->
         <a-text
