@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武蔵野大学有明キャンパス - A-Frame WebXR</title>
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/supermedium/superframe@master/components/environment/dist/aframe-environment-component.min.js"></script>
+    <script src="js/aframe-campus-components.js"></script>
+    <script src="js/aframe-building-components.js"></script>
+    <style>
+        #info-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div id="info-panel">
+        <h3>武蔵野大学有明キャンパス</h3>
+        <p>WASDキー: 移動 | マウス: 視点 | VRモード対応</p>
+    </div>
+
+    <a-scene
+        webxr="optionalFeatures: hand-tracking"
+        shadow="type: pcfsoft">
+        
+        <!-- Assets -->
+        <a-assets>
+            <!-- テクスチャ -->
+            <img id="concrete" src="https://cdn.aframe.io/a-painter/images/floor.jpg">
+            
+            <!-- ミックスイン -->
+            <a-mixin id="building-material" 
+                material="color: #FAFAFA; roughness: 0.7; metalness: 0.1"
+                shadow="cast: true; receive: true">
+            </a-mixin>
+            
+            <a-mixin id="window-material" 
+                material="color: #4169E1; metalness: 0.8; roughness: 0.1; emissive: #111144; emissiveIntensity: 0.2">
+            </a-mixin>
+        </a-assets>
+
+        <!-- 空 -->
+        <a-sky src="textures/sky-panorama.jpg" rotation="0 -90 0"></a-sky>
+
+        <!-- カメラ -->
+        <a-entity id="rig" movement-controls position="0 1.6 50">
+            <a-entity 
+                camera 
+                look-controls 
+                wasd-controls
+                position="0 0 0">
+            </a-entity>
+            <a-entity 
+                laser-controls="hand: right"
+                raycaster="objects: .clickable">
+            </a-entity>
+            <a-entity hand-controls="hand: left"></a-entity>
+            <a-entity hand-controls="hand: right"></a-entity>
+        </a-entity>
+
+        <!-- ライティング -->
+        <a-light type="ambient" color="#BBB" intensity="0.6"></a-light>
+        <a-light 
+            type="directional" 
+            color="#FFF" 
+            intensity="0.8" 
+            position="50 100 50"
+            castShadow="true"
+            shadow-camera-visible="false"
+            shadow-camera-automatic="false"
+            shadow-camera-left="-100"
+            shadow-camera-right="100"
+            shadow-camera-bottom="-100"
+            shadow-camera-top="100"
+            shadow-camera-near="0.5"
+            shadow-camera-far="200">
+        </a-light>
+
+        <!-- 地面 -->
+        <a-plane 
+            id="ground"
+            position="0 0 0" 
+            rotation="-90 0 0" 
+            width="300" 
+            height="300" 
+            color="#888"
+            shadow="receive: true"
+            material="src: #concrete; repeat: 50 50">
+        </a-plane>
+
+        <!-- 武蔵野大学有明キャンパスの建物群 -->
+        
+        <!-- 1号館（メイン施設） -->
+        <a-entity 
+            id="building-1" 
+            position="-50 0 -10"
+            campus-building="name: 1号館; info: 武蔵野大学有明キャンパスのメイン施設; width: 35; height: 45; depth: 50; floors: 11">
+        </a-entity>
+
+        <!-- 2号館（北側） -->
+        <a-entity 
+            id="building-2" 
+            position="20 0 -35"
+            campus-building="name: 2号館; info: 講義棟・研究施設; width: 45; height: 35; depth: 25; floors: 8">
+        </a-entity>
+
+        <!-- 3号館（東側） -->
+        <a-entity 
+            id="building-3" 
+            position="50 0 10"
+            campus-building="name: 3号館; info: 図書館・学習センター; width: 30; height: 45; depth: 35; floors: 11">
+        </a-entity>
+
+        <!-- 4号館（南東） -->
+        <a-entity 
+            id="building-4" 
+            position="70 0 35"
+            campus-building="name: 4号館; info: 学生サポートセンター; width: 25; height: 30; depth: 20; floors: 7">
+        </a-entity>
+
+        <!-- 5号館（中央低層） -->
+        <a-entity 
+            id="building-5" 
+            position="0 0 0"
+            campus-building="name: 5号館; info: カフェテリア・多目的ホール; width: 30; height: 15; depth: 25; floors: 3; hasGlassFirstFloor: false">
+        </a-entity>
+
+        <!-- 駐車場 -->
+        <a-entity id="parking" position="-70 0 -30">
+            <a-box 
+                position="0 4 0" 
+                width="40" 
+                height="8" 
+                depth="50"
+                color="#CCCCCC"
+                shadow="cast: true; receive: true">
+            </a-box>
+            <!-- 駐車場の階層表現 -->
+            <a-box position="0 4 15" width="36" height="6" depth="2" color="#333"></a-box>
+            <a-box position="0 4 0" width="36" height="6" depth="2" color="#333"></a-box>
+            <a-box position="0 4 -15" width="36" height="6" depth="2" color="#333"></a-box>
+        </a-entity>
+
+        <!-- 道路 -->
+        <!-- メイン道路（東西） -->
+        <a-plane 
+            position="0 0.01 65" 
+            rotation="-90 0 0" 
+            width="200" 
+            height="12" 
+            color="#444"
+            material="roughness: 0.9">
+        </a-plane>
+        
+        <!-- サブ道路（南北） -->
+        <a-plane 
+            position="-90 0.01 0" 
+            rotation="-90 0 0" 
+            width="10" 
+            height="150" 
+            color="#444"
+            material="roughness: 0.9">
+        </a-plane>
+
+        <!-- キャンパス内道路 -->
+        <a-plane 
+            position="-10 0.01 0" 
+            rotation="-90 0 0" 
+            width="8" 
+            height="100" 
+            color="#555"
+            material="roughness: 0.9">
+        </a-plane>
+        
+        <a-plane 
+            position="0 0.01 20" 
+            rotation="-90 90 0" 
+            width="8" 
+            height="80" 
+            color="#555"
+            material="roughness: 0.9">
+        </a-plane>
+
+        <!-- 道路標示 -->
+        <a-entity road-markings></a-entity>
+
+        <!-- 横断歩道 -->
+        <a-entity crosswalk position="0 0.03 59" width="12" length="8"></a-entity>
+        <a-entity crosswalk position="-84 0.03 0" width="8" length="10" rotation="0 90 0"></a-entity>
+        <a-entity crosswalk position="-10 0.03 20" width="8" length="8"></a-entity>
+
+        <!-- 歩道 -->
+        <a-plane 
+            position="0 0.02 57" 
+            rotation="-90 0 0" 
+            width="200" 
+            height="4" 
+            color="#AAA"
+            material="roughness: 0.8">
+        </a-plane>
+
+        <!-- 緑地と木 -->
+        <a-plane 
+            position="-30 0.02 30" 
+            rotation="-90 0 0" 
+            width="30" 
+            height="20" 
+            color="#3A5F3A">
+        </a-plane>
+
+        <!-- 木々 -->
+        <a-entity trees></a-entity>
+
+        <!-- 街路灯 -->
+        <a-entity street-lights></a-entity>
+
+        <!-- 情報パネル表示用 -->
+        <a-text
+            id="building-info-text"
+            position="0 30 0"
+            value=""
+            align="center"
+            width="80"
+            color="#FFFFFF"
+            visible="false"
+            font="kelsonsans">
+        </a-text>
+
+    </a-scene>
+
+    <script>
+        // シーンが読み込まれたらwindowオブジェクトに参照を保存
+        document.addEventListener('DOMContentLoaded', () => {
+            const scene = document.querySelector('a-scene');
+            if (scene) {
+                scene.addEventListener('loaded', () => {
+                    window.aframeScene = scene;
+                    console.log('A-Frame scene loaded');
+                });
+            }
+        });
+        
+        // 空の切り替え機能
+        function switchSky(timeOfDay) {
+            const sky = document.querySelector('a-sky');
+            if (timeOfDay === 'evening') {
+                sky.setAttribute('src', 'textures/sky-evening-panorama.jpg');
+            } else {
+                sky.setAttribute('src', 'textures/sky-panorama.jpg');
+            }
+        }
+    </script>
+</body>
+</html>
